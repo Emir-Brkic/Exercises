@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdbool.h>
 // Strict/Proper binary tree
 // each node have either 2 or 0 children
 
@@ -46,6 +47,7 @@ typedef struct node_t
 node_t *new_node(int val);
 node_t *insert_node(node_t *node, int val);
 int depth(node_t *node);
+int is_balanced(node_t *node);
 
 int main() {
     node_t *root;
@@ -63,7 +65,9 @@ int main() {
 
     }
 
-    printf("\nD = %d", depth(root));
+    printf("\nD = %d\n", depth(root));
+
+    printf("\nB = %d\n", is_balanced(root));
 
 
 
@@ -119,3 +123,10 @@ int depth(node_t *node) {
     return max(left,right) + 1;
 }
 
+//returns a int of 0 or 1 if the tree is balanced, if is not it returns a diferent value
+int is_balanced(node_t *node) {
+    if(node == NULL) {return -1;}
+    int left = depth(node->l_child);
+    int right = depth(node->r_child);
+    return abs((left + 1) - (right + 1));
+} 
