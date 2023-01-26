@@ -13,7 +13,7 @@
 #define DIM_VET (WITH / 10)
 #define PI 3.141592654
 
-void draw_circle(SDL_Renderer *rend);
+void draw_circle(SDL_Renderer *rend, int x, int y, int radius);
 void free_draw(SDL_Renderer *rend);
 
 SDL_Window *Inti_wind();
@@ -56,12 +56,24 @@ int main(int argv, char** args) {
     return 0;
 }
 
-void draw_circle(SDL_Renderer *rend) {
+void draw_circle(SDL_Renderer *rend, int x, int y, int radius) {
+    SDL_SetRenderDrawColor(rend, 255, 255, 0, 255);
+    SDL_RenderDrawPoint(rend, 200, 200);
+    
     SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
-    /*for(double i = 0; i < 360; i++) {
-        int an = (i * PI) / 180;
-        SDL_RenderDrawPoint(rend,(int)cos((double)an) + 200,(int)sin((double)an) +200);
-    }*/
+
+    for(double i = 0; i < 360; i++) {
+        int point_x = x;
+        int point_y = y;
+
+        double an = 0;
+        an = (i * PI) / 180;
+
+        point_x += cos(an) * radius;
+        point_y += sin(an) * radius;
+
+        SDL_RenderDrawPoint(rend, point_x, point_y);
+    }
 }
 
 void free_draw(SDL_Renderer *rend) {
@@ -120,9 +132,7 @@ void sdl_draw_elements(SDL_Renderer *rend) {
 
     
     free_draw(rend);
-    printf("here\n");
-    draw_circle(rend);
-    printf("here\n");
+    draw_circle(rend, 200, 200, 30);
 
     SDL_RenderPresent(rend);
     SDL_Delay(16);
