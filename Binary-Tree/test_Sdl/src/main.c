@@ -6,6 +6,7 @@
 #include <math.h>
 #include <stdbool.h>
 #include <SDL.h>
+#include <SDL_ttf.h>
 
 #define HEIGHT 480
 #define WITH 640
