@@ -27,14 +27,14 @@ struct node_view {
     SDL_Texture *text;
 };
 
-struct node_object {
+struct node_model {
     int data;
     struct node_t *left_c;
     struct node_t *right_c;
 };
 
 typedef struct node_controller {
-    struct node_object object;
+    struct node_model model;
     struct node_view view;
 } node_t;
 
@@ -79,9 +79,9 @@ int main(int argv, char** args) {
     SDL_Surface *textSurface = TTF_RenderText_Solid(font, "69", white);
 
     node_t root;
-    root.object.data = 10;
-    root.object.left_c = NULL;
-    root.object.right_c = NULL;
+    root.model.data = 10;
+    root.model.left_c = NULL;
+    root.model.right_c = NULL;
 
     root.view.circle.center.x = 100;
     root.view.circle.center.y = 100;
