@@ -40,10 +40,10 @@ typedef struct node_controller {
     struct node_view view;
 } node_t;
 
-void print_node_data(node_t node);
+void print_node_data(node_t *node);
 
-void create_node(node_t *node, int value, TTF_Font *font, SDL_Renderer *rend);
-void draw_node(SDL_Renderer *rend, node_t node);
+void create_node(node_t **node, int value, TTF_Font *font, SDL_Renderer *rend);
+void draw_node(SDL_Renderer *rend, node_t *node);
 void draw_circle(SDL_Renderer *rend, int x, int y, int radius);
 void free_draw(SDL_Renderer *rend);
 
@@ -52,7 +52,7 @@ SDL_Renderer *Init_rend(SDL_Window *wind);
 void Init_rect(struct SDL_Rect *rect);
 
 void sdl_event_handler();
-void sdl_draw_elements(SDL_Renderer *rend, node_t root);
+void sdl_draw_elements(SDL_Renderer *rend, node_t *root);
 
 // I know that u shouldn't use global variable like this but it is just an exercise
 bool run = true;
@@ -81,57 +81,14 @@ int main(int argv, char** args) {
     }
 
     node_t *root;
-    node_t node;
-
-    root = calloc(1,sizeof(node_t));
-    if(root == NULL) {
-        printf("Faild to allocate memory for the new node!\n");
-    }
-    create_node(root, 10, font, rend);
-    //create_node(&node, 10, font, rend);
-
-    /*SDL_Color white = WHITE;
-    SDL_Surface *textSurface = TTF_RenderText_Solid(font, "69", white);
-    if(textSurface == NULL) {
-        printf("Faild to create a RenderText Solid!\n");
-    }
-
-    node.view.color = white;
-    node.view.text = SDL_CreateTextureFromSurface(rend, textSurface);
-    if(node.view.text == NULL) {
-        printf("Faild to create a Texture From Surface!\n");
-    }
-
-    int ris = SDL_QueryTexture(node.view.text, NULL, 
-                                    NULL, 
-                                    &node.view.text_rect.w, 
-                                    &node.view.text_rect.h);
-    if(ris < 0) {
-        printf("Faild to Query Texture!\n");
-    }
-
-
-    node.model.data = 10;
-    node.model.left_c = NULL;
-    node.model.right_c = NULL; 
-
     
-    node.view.circle.radius = 30;
-    node.view.circle.center.x = WITH / 2;
-    node.view.circle.center.y = node.view.circle.radius + 1;
-
-
-    node.view.text_rect.x = node.view.circle.center.x - (node.view.text_rect.w / 2);
-    node.view.text_rect.y = node.view.circle.center.y - (node.view.text_rect.h / 2);
-
-    SDL_FreeSurface(textSurface);
-    textSurface = NULL;*/
-
-    print_node_data(*root);
+    create_node(&root, 10, font, rend);
+    //print_node_data(root);
+    
 
     while(run)    {
         sdl_event_handler();
-        sdl_draw_elements(rend,  *root);
+        sdl_draw_elements(rend,  root);
     }
 
     SDL_DestroyTexture(root->view.text);
@@ -145,32 +102,36 @@ int main(int argv, char** args) {
     return 0;
 }
 
-void print_node_data(node_t node) {
+void print_node_data(node_t *node) {
     printf("Node model : \n");
 
-    printf("\tNode value: %d\n",node.model.data);
-    printf("\tNode left child: %X\n",node.model.left_c);
-    printf("\tNode right child: %X\n",node.model.right_c);
+    printf("\tNode value: %d\n",node->model.data);
+    printf("\tNode left child: %X\n",node->model.left_c);
+    printf("\tNode right child: %X\n",node->model.right_c);
 
 
     printf("Node view : \n");
 
     printf("\tNode circle:\n");
-    printf("\t\tNode center: (%d;%d)\n",node.view.circle.center.x,
-                                        node.view.circle.center.y);
-    printf("\t\tNode radius: %d\n",node.view.circle.radius);
+    printf("\t\tNode center: (%d;%d)\n",node->view.circle.center.x,
+                                        node->view.circle.center.y);
+    printf("\t\tNode radius: %d\n",node->view.circle.radius);
 
     printf("\tNode Text:\n");
-    printf("\t\tText color: {%d - %d - %d - %d}\n",node.view.color.r,
-                                    node.view.color.g,
-                                    node.view.color.b,
-                                    node.view.color.a);
-    printf("\t\tText Texture: %d\n",node.view.text);
-    printf("\t\tText rectangle: %d\n",node.view.text_rect);
+    printf("\t\tText color: {%d - %d - %d - %d}\n",node->view.color.r,
+                                    node->view.color.g,
+                                    node->view.color.b,
+                                    node->view.color.a);
+    printf("\t\tText Texture: %d\n",node->view.text);
+    printf("\t\tText rectangle: %d\n",node->view.text_rect);
 }
 
-void create_node(node_t *node, int value, TTF_Font *font, SDL_Renderer *rend) {
-    
+void create_node(node_t **node, int value, TTF_Font *font, SDL_Renderer *rend) {
+
+    *node = calloc(1,sizeof(node_t));
+    if(node == NULL) {
+        printf("Faild to allocate memory for the new node!\n");
+    }
 
     SDL_Color white = WHITE;
     SDL_Surface *textSurface = TTF_RenderText_Solid(font, "69", white);
@@ -178,45 +139,43 @@ void create_node(node_t *node, int value, TTF_Font *font, SDL_Renderer *rend) {
         printf("Faild to create a RenderText Solid!\n");
     }
 
-    node->view.color = white;
-    node->view.text = SDL_CreateTextureFromSurface(rend, textSurface);
-    if(node->view.text == NULL) {
+    (*node)->view.color = white;
+    (*node)->view.text = SDL_CreateTextureFromSurface(rend, textSurface);
+    if((*node)->view.text == NULL) {
         printf("Faild to create a Texture From Surface!\n");
     }
 
-    int ris = SDL_QueryTexture(node->view.text, NULL, 
+    int ris = SDL_QueryTexture((*node)->view.text, NULL, 
                                     NULL, 
-                                    &node->view.text_rect.w, 
-                                    &node->view.text_rect.h);
+                                    &(*node)->view.text_rect.w, 
+                                    &(*node)->view.text_rect.h);
     if(ris < 0) {
         printf("Faild to Query Texture!\n");
     }
 
 
-    node->model.data = 10;
-    node->model.left_c = NULL;
-    node->model.right_c = NULL; 
+    (*node)->model.data = 10;
+    (*node)->model.left_c = NULL;
+    (*node)->model.right_c = NULL; 
 
     
-    node->view.circle.radius = 30;
-    node->view.circle.center.x = WITH / 2;
-    node->view.circle.center.y = node->view.circle.radius + 1;
+    (*node)->view.circle.radius = 30;
+    (*node)->view.circle.center.x = WITH / 2;
+    (*node)->view.circle.center.y = (*node)->view.circle.radius + 1;
 
 
-    node->view.text_rect.x = node->view.circle.center.x - (node->view.text_rect.w / 2);
-    node->view.text_rect.y = node->view.circle.center.y - (node->view.text_rect.h / 2);
+    (*node)->view.text_rect.x = (*node)->view.circle.center.x - ((*node)->view.text_rect.w / 2);
+    (*node)->view.text_rect.y = (*node)->view.circle.center.y - ((*node)->view.text_rect.h / 2);
 
     SDL_FreeSurface(textSurface);
     textSurface = NULL;
-
-
 }
 
-void draw_node(SDL_Renderer *rend, node_t node) {
-    draw_circle(rend, node.view.circle.center.x,
-                      node.view.circle.center.y,
-                      node.view.circle.radius);
-    int ris = SDL_RenderCopy(rend, node.view.text, NULL, &node.view.text_rect);
+void draw_node(SDL_Renderer *rend, node_t *node) {
+    draw_circle(rend, node->view.circle.center.x,
+                      node->view.circle.center.y,
+                      node->view.circle.radius);
+    int ris = SDL_RenderCopy(rend, node->view.text, NULL, &node->view.text_rect);
     if(ris < 0) {
         printf("Faild to render the text!\n");
     }
@@ -290,7 +249,7 @@ SDL_Renderer *Init_rend(SDL_Window *wind) {
 
 
 
-void sdl_draw_elements(SDL_Renderer *rend, node_t root) {
+void sdl_draw_elements(SDL_Renderer *rend, node_t *root) {
     //SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
     //SDL_RenderClear(rend);
 
